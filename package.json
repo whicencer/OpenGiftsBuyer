@@ -1,0 +1,47 @@
+{
+  "name": "opengiftsbuyer",
+  "version": "1.0.0",
+  "description": "Soon...",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/index.ts",
+    
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:deploy": "prisma migrate deploy",
+
+    "build": "tsup src/index.ts --format esm,cjs --dts --out-dir dist",
+    "start": "npm run prisma:deploy && node dist/index.js",
+    
+    "prod": "npm run build && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whicencer/Gifts-Buyer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/whicencer/Gifts-Buyer/issues"
+  },
+  "homepage": "https://github.com/whicencer/Gifts-Buyer#readme",
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "prisma": "^6.11.1",
+    "ts-node-dev": "^2.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@grammyjs/conversations": "^2.1.0",
+    "@grammyjs/files": "^1.1.1",
+    "@grammyjs/menu": "^1.3.0",
+    "@prisma/client": "^6.12.0",
+    "dedent": "^1.6.0",
+    "dotenv": "^17.2.0",
+    "grammy": "^1.37.0",
+    "winston": "^3.17.0"
+  }
+}
