@@ -26,15 +26,15 @@ model Invoice {
   createdAt        DateTime   @default(now())
 }
 
-// model AutobuySettings {
-//   id               Int        @id @default(autoincrement())
-//   user             User       @relation(fields: [userId], references: [id])
-//   userId           Int        @unique
-//   minPriceToBuy    Int        @default(0)
-//   maxPriceToBuy    Int        @default(10000)
-//   minSupply        Int        @default(0)
-//   maxSupply        Int        @default(500000)
-// }
+model AutobuySettings {
+  id               Int        @id @default(autoincrement())
+  user             User       @relation(fields: [userId], references: [id])
+  userId           Int        @unique
+  minPriceToBuy    Int        @default(0)
+  maxPriceToBuy    Int        @default(10000)
+  minSupply        Int        @default(0)
+  maxSupply        Int        @default(500000)
+}
 
 model User {
   id               Int              @id @default(autoincrement())
@@ -45,5 +45,5 @@ model User {
   starBalance      Int              @default(0)
   newGiftsNotify   Boolean          @default(true)
   newGiftsAutobuy  Boolean          @default(true)
-  // autobuySettings  AutobuySettings?
+  autobuySettings  AutobuySettings?
 }

@@ -2,13 +2,16 @@ import { GrammyError } from "grammy";
 import logger from "../../config/logger";
 import { Gift } from "@prisma/client";
 import { TBot } from "../types/Bot";
-import { autobuyConfig } from "../../autobuyConfig";
 import { userRepository } from "../database/UserRepository";
 
 export async function buyGift(userId: number, gift: Gift, bot: TBot): Promise<boolean> {
-  const { minGiftPrice, maxGiftPrice } = autobuyConfig;
-  
   try {
+    const autobuySettings = await userRepository.getAutobuySettings(userId);
+    if (!autobuySettings) return false;
+
+    const minGiftPrice = autobuySettings.minPriceToBuy;
+    const maxGiftPrice = autobuySettings.maxPriceToBuy;
+
     const giftFollowRequirements =
       gift.price >= minGiftPrice
       && gift.price <= maxGiftPrice;

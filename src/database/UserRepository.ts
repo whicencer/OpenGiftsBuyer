@@ -1,12 +1,14 @@
-import type { Prisma, User } from '@prisma/client'
+import type { AutobuySettings, Prisma, User } from '@prisma/client'
 import { prisma } from './client'
 import logger from '../../config/logger';
 
+type UserWithAutobuySettings = Prisma.UserGetPayload<{include: {autobuySettings: true}}>;
 class UserRepository {
-  public async findById(chatId: number): Promise<User | null> {
+  public async findById(chatId: number, autobuySettings: boolean = false): Promise<UserWithAutobuySettings | null> {
     try {
       return prisma.user.findUnique({
-        where: { chatId }
+        where: { chatId },
+        include: { autobuySettings }
       });
     } catch (error) {
       logger.error(`Error getting user from db: ${error}`);
@@ -32,7 +34,12 @@ class UserRepository {
       const isUserExists = await this.checkUserExists(data.chatId);
       if (!isUserExists) {
         return prisma.user.create({
-          data
+          data: {
+            ...data,
+            autobuySettings: {
+              create: {}
+            }
+          }
         });
       }
     } catch (error) {
@@ -82,6 +89,35 @@ class UserRepository {
       logger.error("Error decrementing user balance: ", error);
       return false;
     }
+  }
+
+  public async getAutobuySettings(chatId: number): Promise<AutobuySettings | null> {
+    const user = await this.findById(chatId, true);
+    if (!user) return null;
+    if (!user.autobuySettings) return null;
+
+    return user.autobuySettings;
+  }
+
+  public async updateAutobuySettings(chatId: number, updatedFields: Partial<AutobuySettings>): Promise<boolean> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { chatId },
+        include: { autobuySettings: true },
+      });
+      
+      if (!user) return false;
+
+      await prisma.autobuySettings.update({
+        where: { userId: user.id },
+        data: updatedFields
+      });
+
+      return true;
+    } catch (error) {
+      logger.error("Error updating autobuy settings: ", error);
+    }
+    return false;
   }
 }
 
